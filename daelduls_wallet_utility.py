@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sat Aug 15 14:33:36 2020
-
+Version 1.1
 @author: James Goudy
 
 James Goudy
 Kalispell, Montana
 
 Wallet CSV Exporting Tool For Cardano Daedalus Wallet
-Platform: Windows
-Tested on Daedalus Mainnet 2.2.0
 
------------
+
 Copyright 2020 James Goudy
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +23,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
------------
+
 
 
 
@@ -65,6 +63,11 @@ walletdir = ""
 
 #stores the name of the ouptput csv dir
 outputdir = ""
+
+#flag all wallets in one file
+allwallets = 1
+
+allwalletsfilename = ""
 
 # get the wallet directory
 # remembers previous wallet location
@@ -248,6 +251,7 @@ def menu():
         
 
     global outputdir
+    global allwallets
     
     menuChoice =1
     userChoice = -1
@@ -290,10 +294,13 @@ def menu():
 
         # print all wallet information
         if userChoice == len(menuWalletList):
+
+            allwallets = 1 
+            
             for item in wnames:
                                 
                 # print(item[0]) 
-                  
+ 
                 importData(item[0])        
             
         # print selected wallet   
@@ -321,6 +328,9 @@ def menu():
 def importData(dbwalletfilename):
     
     global outputdir
+    global allwallets
+    global allwalletsfilename
+    
     rewardstring = ""
     
     # counter to keep track of number printed fields
@@ -367,15 +377,34 @@ def importData(dbwalletfilename):
     # retrieve first row so wallet name can be retreived
     frow = rows[0]
     
-    # build the output file name string path
-    outputfileName = outputdir + "\\\\" + str(frow[2])\
+    if(allwallets == 1):
+        
+        # build one filename to store all wallets
+        # build the output file name string path
+        outputfileName = outputdir + "\\\\" + str('all_wallets')\
                         + "_"+ timestamp +".csv"
+        
+        # store the one file name
+        # so allwallets can go into one file
+        allwalletsfilename = outputfileName
+        allwallets = 2
+        
+    elif(allwallets == 2):
+        
+        # use the one file name for rest of the all wallets
+        outputfileName = allwalletsfilename
+        
+    else:
+        
+        # build the output file name string path
+        outputfileName = outputdir + "\\\\" + str(frow[2])\
+                            + "_"+ timestamp +".csv"
         
     
     print("\nRetreiving Wallet Data for " + str(frow[2]) + "- please wait\n")
     
-    # create output file
-    outputfile = open(outputfileName,"w+")
+    # create output file (w+)
+    outputfile = open(outputfileName,"a")
 
 
 
@@ -424,7 +453,7 @@ def importData(dbwalletfilename):
     outputfile.flush()
         
     print()
-    
+    outputfile.write("\n")
     # close the file and connections.
     outputfile.close()
     con.close()

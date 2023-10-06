@@ -1,4 +1,8 @@
-# Daedalus_Wallet_CSV_Print_Utility
+
+# *** This project is no longer being maintained.  It is listed as reference for anyone who wishes to have a look. *** 
+
+### Daedalus_Wallet_CSV_Print_Utility
+
 Daedalus Wallet - A python print script to print your Daedalus wallet(s) as a csv
 
 Platform: Windows
